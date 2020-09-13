@@ -1,0 +1,19 @@
+{
+  "name": "nodeproxy",
+  "version": "1.0.0",
+  "description": "Proxy toward sharepoint",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "agentkeepalive": "^4.1.3",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "harmon": "^1.4.4",
+    "http-proxy": "^1.18.1",
+    "http-proxy-response-rewrite": "0.0.1"
+  }
+}
