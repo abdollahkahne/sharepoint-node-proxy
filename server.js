@@ -30,7 +30,7 @@ apiProxy.on("proxyRes", function (proxyRes, req, res) {
   if (req.headers.accept.indexOf("image") > -1) {
   } else {
     modifyResponse(res, proxyRes.headers["content-encoding"], function (body) {
-      res.setHeader("custom-header", "Powered By Microsoft!");
+      res.setHeader("custom-header", "Powered By Express!");
       res.setHeader("access-control-allow-origin", "http://localhost:3000");
       return body;
     });
