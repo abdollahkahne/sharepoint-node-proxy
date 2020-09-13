@@ -1,9 +1,9 @@
 var express = require("express");
-// var cors = require("cors");
 var modifyResponse = require("http-proxy-response-rewrite");
 var Agent = require("agentkeepalive");
 var httpProxy = require("http-proxy");
 
+//if you use basic auth mode you can delete agent from here and from middleware
 var agent = new Agent({
   maxSockets: 100,
   keepAlive: true,
@@ -15,25 +15,21 @@ var agent = new Agent({
 });
 
 var app = express();
-
 var apiProxy = httpProxy.createProxyServer();
+
+//remove origin and Referrer to prevent forbidden response (403 error)
 apiProxy.on("proxyReq", function (proxyReq, req, res, options) {
   proxyReq.removeHeader("Origin");
   proxyReq.removeHeader("Referrer");
 });
 
-apiProxy.on("proxyRes", function (proxyRes, req, res) {
-  // ntlm
-  // var key = "www-authenticate";
-  // proxyRes.headers[key] =
-  //   proxyRes.headers[key] && proxyRes.headers[key].split(",");
-  // end ntlm
+//add cors-related headers!
 
+apiProxy.on("proxyRes", function (proxyRes, req, res) {
+// image are simple request so they are not prevented by CORS Policy by default so make an exception for them
   if (req.headers.accept.indexOf("image") > -1) {
   } else {
     modifyResponse(res, proxyRes.headers["content-encoding"], function (body) {
-      // console.log(body);
-
       res.setHeader("custom-header", "Powered By Microsoft!");
       res.setHeader("access-control-allow-origin", "http://localhost:3000");
       return body;
@@ -41,14 +37,10 @@ apiProxy.on("proxyRes", function (proxyRes, req, res) {
   }
 });
 
-var serverOne = "http://shpweb";
-
-var corsOptions = {
-  origin: "http://localhost:3000",
-  optionsSuccessStatus: 200,
-};
+var serverOne = "http://sharepoint";
 
 app.all("/*", function (req, res, next) {
+  // if you use Basic Auth mode you may delete agent property
   apiProxy.web(req, res, { target: serverOne, agent: agent }, function (err) {
     console.log(err);
   });
