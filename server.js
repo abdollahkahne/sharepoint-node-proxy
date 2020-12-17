@@ -19,8 +19,11 @@ var apiProxy = httpProxy.createProxyServer();
 
 //remove origin and Referrer to prevent forbidden response (403 error)
 apiProxy.on("proxyReq", function (proxyReq, req, res, options) {
+  //This condition added for more security
+  if (req.headers.origin && req.headers.origin.startsWith("http://localhost:3000")) {
   proxyReq.removeHeader("Origin");
   proxyReq.removeHeader("Referrer");
+  }
 });
 
 //add cors-related headers!
